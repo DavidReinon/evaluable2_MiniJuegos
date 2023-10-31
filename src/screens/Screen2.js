@@ -5,6 +5,8 @@ export default function Screen2() {
     const [lletres, setLletres] = useState(new Array(100).fill({}));
     const [rellenades, setRellenades] = useState(false);
     const [lletraBackGroundColor, setLletraBackGroundColor] = useState("white");
+    const [aplicarCambiBackGroundColor, setAplicarCambiBackGroundColor] =
+        useState({});
 
     const rellenarLletres = () => {
         if (rellenades) return;
@@ -21,10 +23,16 @@ export default function Screen2() {
     };
 
     const onPressTouchable = (index) => {
-        lletres[index] = {
-            lletra: lletres[index].lletra,
-            backGroundColor: "blue",
-        };
+        setLletraBackGroundColor(
+            lletraBackGroundColor === "white" ? "blue" : "white"
+        );
+        setAplicarCambiBackGroundColor(
+            {
+                lletra: lletres[index].lletra,
+                backGroundColor: lletraBackGroundColor,
+            },
+            (lletres[index] = aplicarCambiBackGroundColor)
+        );
     };
     return (
         <View
