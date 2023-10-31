@@ -2,7 +2,7 @@ import { Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 
 export default function Screen2() {
-    const [lletres, setLletres] = useState(new Array(100).fill(""));
+    const [lletres, setLletres] = useState(new Array(100).fill({}));
     const [rellenades, setRellenades] = useState(false);
     const [lletraBackGroundColor, setLletraBackGroundColor] = useState("white");
 
@@ -11,12 +11,21 @@ export default function Screen2() {
         const alfabeto = "abcdefghijklmnopqrstuvwxyz";
         const letrasRellenadas = lletres.map(() => {
             const indice = Math.floor(Math.random() * alfabeto.length);
-            return alfabeto.charAt(indice);
+            return {
+                lletra: alfabeto.charAt(indice),
+                backGroundColor: "white",
+            };
         });
         setLletres(letrasRellenadas);
         setRellenades(true);
     };
 
+    const onPressTouchable = (index) => {
+        lletres[index] = {
+            lletra: lletres[index].lletra,
+            backGroundColor: "blue",
+        };
+    };
     return (
         <View
             style={{
@@ -53,19 +62,16 @@ export default function Screen2() {
                     >
                         <TouchableOpacity
                             style={{
-                                width: 38,
+                                width: 40,
+                                backgroundColor: unaLletra.backGroundColor,
                                 padding: 14,
                                 borderWidth: 1,
                             }}
-                            onPress={() =>
-                                setLletraBackGroundColor(
-                                    lletraBackGroundColor === "white"
-                                        ? "blue"
-                                        : "white"
-                                )
-                            }
+                            onPress={() => onPressTouchable(index)}
                         >
-                            <Text style={{ fontSize: 15 }}>{unaLletra}</Text>
+                            <Text style={{ fontSize: 13 }}>
+                                {unaLletra.lletra}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 ))}
