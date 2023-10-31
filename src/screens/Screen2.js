@@ -1,21 +1,28 @@
 import { Text, View, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+
 export default function Screen2() {
-    const lletres = new Array(100);
+    const [lletres, setLletres] = useState(new Array(100).fill(""));
+    const [rellenades, setRellenades] = useState(false);
+    const [lletraBackGroundColor, setLletraBackGroundColor] = useState("white");
 
     const rellenarLletres = () => {
+        if (rellenades) return;
         const alfabeto = "abcdefghijklmnopqrstuvwxyz";
-        lletres.forEach((element) => {
-            let indice = Math.floor(Math.random() * alfabeto.length);
-            element = alfabeto.charAt(indice);
+        const letrasRellenadas = lletres.map(() => {
+            const indice = Math.floor(Math.random() * alfabeto.length);
+            return alfabeto.charAt(indice);
         });
+        setLletres(letrasRellenadas);
+        setRellenades(true);
     };
 
     return (
         <View
             style={{
                 justifyContent: "center",
-                alignSelf: "center",
-                marginVertical: 80,
+                alignItems: "center",
+                marginVertical: 60,
             }}
         >
             <TouchableOpacity onPress={() => rellenarLletres()}>
@@ -29,38 +36,39 @@ export default function Screen2() {
                     Sopa de letras
                 </Text>
             </TouchableOpacity>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <View style={{ flexDirection: "row" }}>
-                    <View style={{ flexDirection: "column" }}>
-                        <View style={{ flexDirection: "column" }}>
-                            {lletres.map((unaLletra, index) => {
-                                return (
-                                    index % 10 == 0 &&(
-                                        <View
-                                            style={{ flexDirection: "column" }}
-                                            key={index}
-                                        >
-                                            )
-                                            <TouchableOpacity
-                                                style={{
-                                                    backgroundColor: "white",
-                                                    width: 38,
-                                                    padding: 14,
-                                                    borderWidth: 1,
-                                                }}
-                                            >
-                                                <Text style={{ fontSize: 15 }}>
-                                                    {unaLletra}
-                                                </Text>
-                                            </TouchableOpacity>
-                                            <View style={{ width: 0 }}></View>
-                                            (index % 10 == 0) &&{" "}
-                                        </View>
-                                );
-                            })}
-                        </View>
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                }}
+            >
+                {lletres.map((unaLletra, index) => (
+                    <View
+                        style={{
+                            flexDirection: "row",
+                        }}
+                        key={index}
+                    >
+                        <TouchableOpacity
+                            style={{
+                                width: 38,
+                                padding: 14,
+                                borderWidth: 1,
+                            }}
+                            onPress={() =>
+                                setLletraBackGroundColor(
+                                    lletraBackGroundColor === "white"
+                                        ? "blue"
+                                        : "white"
+                                )
+                            }
+                        >
+                            <Text style={{ fontSize: 15 }}>{unaLletra}</Text>
+                        </TouchableOpacity>
                     </View>
-                </View>
+                ))}
             </View>
         </View>
     );
