@@ -4,7 +4,9 @@ import React, { useState } from "react";
 export default function Screen2() {
     const [lletres, setLletres] = useState(new Array(100).fill({}));
     // Fer Array de sols color
-    const [lletresBackGroundColor, setLletresBackGroundColor] = useState(new Array(100).fill("white"));
+    const [lletresBackGroundColor, setLletresBackGroundColor] = useState(
+        new Array(100).fill("white")
+    );
     const [rellenades, setRellenades] = useState(false);
 
     const [lletraBackGroundColor, setLletraBackGroundColor] = useState();
@@ -16,7 +18,7 @@ export default function Screen2() {
             const indice = Math.floor(Math.random() * alfabeto.length);
             return {
                 text: alfabeto.charAt(indice),
-                // backGroundColor: "white",
+                backGroundColor: "white",
             };
         });
         setLletres(letrasRellenadas);
@@ -71,7 +73,7 @@ export default function Screen2() {
                         <TouchableOpacity
                             style={{
                                 width: 40,
-                                backgroundColor: lletresBackGroundColor[index],
+                                backgroundColor: unaLletra.backGroundColor,
                                 padding: 14,
                                 borderWidth: 1,
                             }}
