@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import Screen2 from "./src/screens/Screen2";
+import Screen1 from "./src/screens/Screen1";
 
 export default function App() {
     return (
