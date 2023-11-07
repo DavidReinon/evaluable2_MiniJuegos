@@ -13,7 +13,9 @@ export default function Screen2() {
     const gridSize = 10;
     const [sopaDeLetras, setSopaDeLetras] = useState([]);
     const [sopaRellenada, setSopaRellenada] = useState(false);
-
+    const [lletresBackGroundColor, setLletresBackGroundColor] = useState(
+        new Array(100).fill("white")
+    );
     const generarLetrasAleatorias = () => {
         const alfabeto = "abcdefghijklmnopqrstuvwxyz";
         const letrasAleatorias = [];
@@ -84,7 +86,9 @@ export default function Screen2() {
     };
 
     const onPressTouchable = (index) => {
-        // Tu código para cambiar el color de fondo
+        let newArray = [...lletresBackGroundColor];
+        newArray[index] = newArray[index] === "white" ? "blue" : "white";
+        setLletresBackGroundColor(newArray);
     };
 
     return (
