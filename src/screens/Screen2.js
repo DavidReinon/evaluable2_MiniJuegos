@@ -2,39 +2,28 @@ import { Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 
 export default function Screen2() {
-    const [lletres, setLletres] = useState(new Array(100).fill({}));
+    const [lletres, setLletres] = useState(new Array(100).fill(""));
     // Fer Array de sols color
     const [lletresBackGroundColor, setLletresBackGroundColor] = useState(
         new Array(100).fill("white")
     );
     const [rellenades, setRellenades] = useState(false);
 
-    const [lletraBackGroundColor, setLletraBackGroundColor] = useState();
-
     const rellenarLletres = () => {
         if (rellenades) return;
         const alfabeto = "abcdefghijklmnopqrstuvwxyz";
         const letrasRellenadas = lletres.map(() => {
             const indice = Math.floor(Math.random() * alfabeto.length);
-            return {
-                text: alfabeto.charAt(indice),
-                backGroundColor: "white",
-            };
+            return alfabeto.charAt(indice);
         });
         setLletres(letrasRellenadas);
         setRellenades(true);
     };
 
-    const setearNewLletres = (index) => {
-        let newArray = [...lletres];
-        newArray[index].backGroundColor = lletraBackGroundColor;
-        setLletres(newArray);
-    };
     const onPressTouchable = (index) => {
-        setLletraBackGroundColor(
-            lletres[index].backGroundColor === "white" ? "blue" : "white"
-        );
-        setearNewLletres(index);
+        let newArray = [...lletresBackGroundColor];
+        newArray[index] = newArray[index] === "white" ? "blue" : "white";
+        setLletresBackGroundColor(newArray);
     };
     return (
         <View
@@ -73,15 +62,13 @@ export default function Screen2() {
                         <TouchableOpacity
                             style={{
                                 width: 40,
-                                backgroundColor: unaLletra.backGroundColor,
+                                backgroundColor: lletresBackGroundColor[index],
                                 padding: 14,
                                 borderWidth: 1,
                             }}
                             onPress={() => onPressTouchable(index)}
                         >
-                            <Text style={{ fontSize: 13 }}>
-                                {unaLletra.text}
-                            </Text>
+                            <Text style={{ fontSize: 13 }}>{unaLletra}</Text>
                         </TouchableOpacity>
                     </View>
                 ))}
