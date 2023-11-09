@@ -10,69 +10,129 @@ export default function Screen2() {
             });
         });
     };
+
     const [grid, setGrid] = useState(initArray("grid"));
     const [gridBackGroundColor, setGridBackGroundColor] = useState(
         initArray("color")
     );
     const [rellenades, setRellenades] = useState(false);
     const words = ["Phone", "Mobile", "Software", "Developer", "System", "App"];
-    let limitHeigthNumber = 10;
+    let limitHeightNumber = 10;
     let limitWidthNumber = 10;
 
-    const tryPutWord = (randomWidth, randomHeigth, wordIndex) => {
+    const tryPutWord = (randomWidth, randomHeight, wordIndex) => {
         let letterIndex = 0;
         let result = true;
-        while (true) {
-            if (!grid[randomWidth][randomHeigth]) {
-                const newGrid = [...grid];
-                newGrid[randomWidth] = [...grid[randomWidth]];
-                newGrid[randomWidth][randomHeigth] =
-                    words[wordIndex][letterIndex];
-                letterIndex += 1;
-                randomWidth += 1;
-                randomHeigth += 1;
-                setGrid(newGrid);
+        let newGrid = [...grid];
+
+        while (letterIndex < words[wordIndex].length) {
+            if (
+                randomWidth >= 10 ||
+                randomHeight >= 10 ||
+                newGrid[randomWidth] === undefined ||
+                newGrid[randomWidth][randomHeight] !== null
+            ) {
+                result = false;
+                break;
             }
-            result = false;
-            break;
+
+            newGrid[randomWidth] = [...newGrid[randomWidth]];
+            newGrid[randomWidth][randomHeight] = words[wordIndex][letterIndex];
+            letterIndex += 1;
+
+            if (wordIndex === 0) {
+                // Phone, dirección diagonal '\'
+                randomWidth += 1;
+                randomHeight += 1;
+            } else if (wordIndex === 1) {
+                // Mobile, dirección diagonal invertida '/'
+                randomWidth -= 1;
+                randomHeight -= 1;
+            } else if (wordIndex === 2) {
+                // Software, direccion vertical normal
+                randomWidth += 1;
+            } else if (wordIndex === 3) {
+                // Developer, dirección vertical inversa
+                randomWidth -= 1;
+            } else if (wordIndex === 4) {
+                // System, dirección horizontal normal
+                randomHeight += 1;
+            } else {
+                // App, dirección horizontal inversa
+                randomHeight -= 1;
+            }
         }
+
+        if (result) {
+            setGrid(newGrid);
+        }
+
         return result;
     };
+
     const putWordsInRandomOrder = () => {
-        for (let i = 0; i < 1; i++) { //Probando solo Phone (i < words.length)
-            if (words[i] === "Phone") {
-                limitWidthNumber = 7; //6 usando Math.random
-                limitHeigthNumber = 7; //6 usando Math.random
+        for (let i = 0; i < words.length; i++) {
+            let success = false;
+
+            if (words[i] === "Software" || words[i] === "Developer") {
+                // Palabras en dirección vertical
+                limitWidth = 10;
+                limitHeight = 10 - words[i].length + 1;
+            } else if (words[i] === "System" || words[i] === "App") {
+                // Palabras en dirección horizontal
+                limitWidth = 10 - words[i].length + 1;
+                limitHeight = 10;
+            } else if (words[i] === "Phone") {
+                // Palabra en dirección diagonal
+                limitWidth = 7;
+                limitHeight = 7;
+            } else if (words[i] === "Mobile") {
+                // Palabra en dirección diagonal inversa
+                limitWidth = 7;
+                limitHeight = 10 - words[i].length + 1;
             }
-            const defaultGrid = [...grid];
-            const randomWidth = Math.floor(Math.random() * limitWidthNumber);
-            const randomHeigth = Math.floor(Math.random() * limitHeigthNumber);
-            if (!grid[randomWidth][randomHeigth]) {
-                if (!tryPutWord(randomWidth, randomHeigth, i)) {
+            while (!success) {
+                const defaultGrid = [...grid];
+                const randomWidth = Math.floor(
+                    Math.random() * limitWidthNumber
+                );
+                const randomHeight = Math.floor(
+                    Math.random() * limitHeightNumber
+                );
+
+                if (tryPutWord(randomWidth, randomHeight, i)) {
+                    success = true;
+                } else {
                     setGrid(defaultGrid);
-                    i = 0;
                 }
             }
         }
     };
-    const rellenarLletres = () => {
+
+    const rellenarLetras = () => {
         if (rellenades) return;
+
         const alfabeto = "abcdefghijklmnopqrstuvwxyz";
         const letrasRellenadas = grid.map(() => {
             const indice = Math.floor(Math.random() * alfabeto.length);
             return alfabeto.charAt(indice);
         });
+
         setGrid(letrasRellenadas);
         setRellenades(true);
     };
 
     const onPressTouchable = (indexRow, indexElement) => {
-        const newArray = [...gridBackGroundColor];
-        newArray[indexRow] = [...gridBackGroundColor[indexRow]];
-        newArray[indexRow][indexElement] =
-            newArray[indexRow][indexElement] === "white" ? "blue" : "white";
-        setGridBackGroundColor(newArray);
+        let newGridBackground = [...gridBackGroundColor];
+        newGridBackground[indexRow] = [...newGridBackground[indexRow]];
+        newGridBackground[indexRow][indexElement] =
+            newGridBackground[indexRow][indexElement] === "white"
+                ? "blue"
+                : "white";
+
+        setGridBackGroundColor(newGridBackground);
     };
+
     return (
         <View
             style={{
@@ -112,8 +172,8 @@ export default function Screen2() {
                                 style={{
                                     width: 40,
                                     backgroundColor:
-                                        gridBackGroundColor[
-                                            indexRow + indexElement
+                                        gridBackGroundColor[indexRow][
+                                            indexElement
                                         ],
                                     padding: 14,
                                     borderWidth: 1,
