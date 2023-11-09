@@ -2,28 +2,76 @@ import { Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 
 export default function Screen2() {
-    const [lletres, setLletres] = useState(new Array(100).fill(""));
-    // Fer Array de sols color
-    const [lletresBackGroundColor, setLletresBackGroundColor] = useState(
-        new Array(100).fill("white")
+    const initArray = (tipe) => {
+        return [...Array(10).keys()].map(() => {
+            return [...Array(10).keys()].map(() => {
+                if (tipe === "grid") return null;
+                return "white";
+            });
+        });
+    };
+    const [grid, setGrid] = useState(initArray("grid"));
+    const [gridBackGroundColor, setGridBackGroundColor] = useState(
+        initArray("color")
     );
     const [rellenades, setRellenades] = useState(false);
+    const words = ["Phone", "Mobile", "Software", "Developer", "System", "App"];
+    let limitHeigthNumber = 10;
+    let limitWidthNumber = 10;
 
+    const tryPutWord = (randomWidth, randomHeigth, wordIndex) => {
+        let letterIndex = 0;
+        let result = true;
+        while (true) {
+            if (!grid[randomWidth][randomHeigth]) {
+                const newGrid = [...grid];
+                newGrid[randomWidth] = [...grid[randomWidth]];
+                newGrid[randomWidth][randomHeigth] =
+                    words[wordIndex][letterIndex];
+                letterIndex += 1;
+                randomWidth += 1;
+                randomHeigth += 1;
+                setGrid(newGrid);
+            }
+            result = false;
+            break;
+        }
+        return result;
+    };
+    const putWordsInRandomOrder = () => {
+        for (let i = 0; i < 1; i++) { //Probando solo Phone (i < words.length)
+            if (words[i] === "Phone") {
+                limitWidthNumber = 7; //6 usando Math.random
+                limitHeigthNumber = 7; //6 usando Math.random
+            }
+            const defaultGrid = [...grid];
+            const randomWidth = Math.floor(Math.random() * limitWidthNumber);
+            const randomHeigth = Math.floor(Math.random() * limitHeigthNumber);
+            if (!grid[randomWidth][randomHeigth]) {
+                if (!tryPutWord(randomWidth, randomHeigth, i)) {
+                    setGrid(defaultGrid);
+                    i = 0;
+                }
+            }
+        }
+    };
     const rellenarLletres = () => {
         if (rellenades) return;
         const alfabeto = "abcdefghijklmnopqrstuvwxyz";
-        const letrasRellenadas = lletres.map(() => {
+        const letrasRellenadas = grid.map(() => {
             const indice = Math.floor(Math.random() * alfabeto.length);
             return alfabeto.charAt(indice);
         });
-        setLletres(letrasRellenadas);
+        setGrid(letrasRellenadas);
         setRellenades(true);
     };
 
-    const onPressTouchable = (index) => {
-        let newArray = [...lletresBackGroundColor];
-        newArray[index] = newArray[index] === "white" ? "blue" : "white";
-        setLletresBackGroundColor(newArray);
+    const onPressTouchable = (indexRow, indexElement) => {
+        const newArray = [...gridBackGroundColor];
+        newArray[indexRow] = [...gridBackGroundColor[indexRow]];
+        newArray[indexRow][indexElement] =
+            newArray[indexRow][indexElement] === "white" ? "blue" : "white";
+        setGridBackGroundColor(newArray);
     };
     return (
         <View
@@ -33,7 +81,7 @@ export default function Screen2() {
                 marginVertical: 60,
             }}
         >
-            <TouchableOpacity onPress={() => rellenarLletres()}>
+            <TouchableOpacity onPress={() => putWordsInRandomOrder()}>
                 <Text
                     style={{
                         fontSize: 40,
@@ -52,24 +100,34 @@ export default function Screen2() {
                     justifyContent: "center",
                 }}
             >
-                {lletres.map((unaLletra, index) => (
+                {grid.map((row, indexRow) => (
                     <View
                         style={{
                             flexDirection: "row",
                         }}
-                        key={index}
+                        key={indexRow}
                     >
-                        <TouchableOpacity
-                            style={{
-                                width: 40,
-                                backgroundColor: lletresBackGroundColor[index],
-                                padding: 14,
-                                borderWidth: 1,
-                            }}
-                            onPress={() => onPressTouchable(index)}
-                        >
-                            <Text style={{ fontSize: 13 }}>{unaLletra}</Text>
-                        </TouchableOpacity>
+                        {row.map((element, indexElement) => (
+                            <TouchableOpacity
+                                style={{
+                                    width: 40,
+                                    backgroundColor:
+                                        gridBackGroundColor[
+                                            indexRow + indexElement
+                                        ],
+                                    padding: 14,
+                                    borderWidth: 1,
+                                }}
+                                key={indexElement}
+                                onPress={() =>
+                                    onPressTouchable(indexRow, indexElement)
+                                }
+                            >
+                                <Text style={{ fontSize: 13 }}>
+                                    {element || ""}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 ))}
             </View>
