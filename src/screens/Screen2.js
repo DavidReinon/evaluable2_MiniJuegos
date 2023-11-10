@@ -2,18 +2,25 @@ import { Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 
 export default function Screen2() {
-    const initArray = (tipe) => {
+    const initArray = () => {
         return [...Array(10).keys()].map(() => {
             return [...Array(10).keys()].map(() => {
-                if (tipe === "grid") return null;
+                return null;
+            });
+        });
+    };
+
+    const initColorArray = () => {
+        return [...Array(10).keys()].map(() => {
+            return [...Array(10).keys()].map(() => {
                 return "white";
             });
         });
     };
 
-    const [grid, setGrid] = useState(initArray("grid"));
+    const [grid, setGrid] = useState(initArray());
     const [gridBackGroundColor, setGridBackGroundColor] = useState(
-        initArray("color")
+        initColorArray()
     );
     const [rellenades, setRellenades] = useState(false);
     const words = ["Phone", "Mobile", "Software", "Developer", "System", "App"];
@@ -34,8 +41,17 @@ export default function Screen2() {
                 break;
             }
 
-            newGrid[randomColumn] = [...grid[randomColumn]];
-            newGrid[randomColumn][randomRow] = words[wordIndex][letterIndex];
+            newGrid = newGrid.map((row, columnIndex) => {
+                if (columnIndex === randomColumn) {
+                    return row.map((cell, rowIndex) => {
+                        if (rowIndex === randomRow) {
+                            return words[wordIndex][letterIndex];
+                        }
+                        return cell;
+                    });
+                }
+                return row;
+            });
             letterIndex += 1;
 
             if (wordIndex === 0) {
