@@ -17,54 +17,53 @@ export default function Screen2() {
     );
     const [rellenades, setRellenades] = useState(false);
     const words = ["Phone", "Mobile", "Software", "Developer", "System", "App"];
-    let limitHeightNumber = 10;
-    let limitWidthNumber = 10;
 
-    const tryPutWord = (randomWidth, randomHeight, wordIndex) => {
+    const tryPutWord = (randomColumn, randomRow, wordIndex) => {
         let letterIndex = 0;
         let result = true;
         let newGrid = [...grid];
 
         while (letterIndex < words[wordIndex].length) {
             if (
-                randomWidth >= 10 ||
-                randomHeight >= 10 ||
-                newGrid[randomWidth] === undefined ||
-                newGrid[randomWidth][randomHeight] !== null
+                randomColumn >= 10 ||
+                randomRow >= 10 ||
+                newGrid[randomColumn] === undefined ||
+                newGrid[randomColumn][randomRow] !== null
             ) {
                 result = false;
                 break;
             }
 
-            newGrid[randomWidth] = [...newGrid[randomWidth]];
-            newGrid[randomWidth][randomHeight] = words[wordIndex][letterIndex];
+            newGrid[randomColumn] = [...grid[randomColumn]];
+            newGrid[randomColumn][randomRow] = words[wordIndex][letterIndex];
             letterIndex += 1;
 
             if (wordIndex === 0) {
                 // Phone, dirección diagonal '\'
-                randomWidth += 1;
-                randomHeight += 1;
+                randomColumn += 1;
+                randomRow += 1;
             } else if (wordIndex === 1) {
                 // Mobile, dirección diagonal invertida '/'
-                randomWidth -= 1;
-                randomHeight -= 1;
+                randomColumn -= 1;
+                randomRow -= 1;
             } else if (wordIndex === 2) {
                 // Software, direccion vertical normal
-                randomWidth += 1;
+                randomColumn += 1;
             } else if (wordIndex === 3) {
                 // Developer, dirección vertical inversa
-                randomWidth -= 1;
+                randomColumn -= 1;
             } else if (wordIndex === 4) {
                 // System, dirección horizontal normal
-                randomHeight += 1;
+                randomRow += 1;
             } else {
                 // App, dirección horizontal inversa
-                randomHeight -= 1;
+                randomRow -= 1;
             }
         }
 
         if (result) {
             setGrid(newGrid);
+            console.log(newGrid);
         }
 
         return result;
@@ -73,38 +72,80 @@ export default function Screen2() {
     const putWordsInRandomOrder = () => {
         for (let i = 0; i < words.length; i++) {
             let success = false;
+            let limitColumn = 10;
+            let complexMathRandom = "";
 
-            if (words[i] === "Software" || words[i] === "Developer") {
+            if (words[i] === "Software") {
                 // Palabras en dirección vertical
-                limitWidth = 10;
-                limitHeight = 10 - words[i].length + 1;
-            } else if (words[i] === "System" || words[i] === "App") {
+                limitColumn = 10;
+                limitRow = 11 - words[i].length; // 11 por Math.Random // 0 a 2
+            } else if (words[i] === "Developer") {
+                // Palabras en dirección vertical invertido
+                complexMathRandom = "row";
+                limitColumn = 10;
+                limitRow = words[i].length - 1; // 8 a 9
+            } else if (words[i] === "System") {
                 // Palabras en dirección horizontal
-                limitWidth = 10 - words[i].length + 1;
-                limitHeight = 10;
+                limitColumn = 11 - words[i].length; // 11 por Math.Random // 0 a 4
+                limitRow = 10;
+            } else if (words[i] === "App") {
+                // Palabras en dirección horizontal invertido
+                complexMathRandom = "column";
+                limitColumn = words[i].length - 1; // 2 a 9
+                limitRow = 10;
             } else if (words[i] === "Phone") {
-                // Palabra en dirección diagonal
-                limitWidth = 7;
-                limitHeight = 7;
+                // Palabra en dirección diagonal '\'
+                limitColumn = 11 - words[i].length; // 0 a 5
+                limitRow = 11 - words[i].length; // 0 a 5
             } else if (words[i] === "Mobile") {
-                // Palabra en dirección diagonal inversa
-                limitWidth = 7;
-                limitHeight = 10 - words[i].length + 1;
+                // Palabra en dirección diagonal invertida '/'
+                complexMathRandom = "columnRow";
+                limitColumn = words[i].length - 1; // 5 a 9
+                limitRow = words[i].length - 1; // 5 a 9
             }
-            while (!success) {
-                const defaultGrid = [...grid];
-                const randomWidth = Math.floor(
-                    Math.random() * limitWidthNumber
-                );
-                const randomHeight = Math.floor(
-                    Math.random() * limitHeightNumber
-                );
 
-                if (tryPutWord(randomWidth, randomHeight, i)) {
+            let attempts = 0;
+            const maxAttempts = 20; // Puedes ajustar este número según sea necesario
+
+            while (!success && attempts < maxAttempts) {
+                //const defaultGrid = [...grid];
+                let randomColumn;
+                let randomRow;
+
+                if (complexMathRandom === "columnRow") {
+                    randomColumn =
+                        Math.floor(Math.random() * (10 - limitColumn)) +
+                        limitColumn;
+                    randomRow =
+                        Math.floor(Math.random() * (10 - limitRow)) + limitRow;
+                } else if (complexMathRandom === "row") {
+                    randomColumn = Math.floor(Math.random() * limitColumn);
+                    randomRow =
+                        Math.floor(Math.random() * (10 - limitRow)) + limitRow;
+                } else if (complexMathRandom === "column") {
+                    randomColumn =
+                        Math.floor(Math.random() * (10 - limitColumn)) +
+                        limitColumn;
+                    randomRow = Math.floor(Math.random() * limitRow);
+                } else {
+                    randomColumn = Math.floor(Math.random() * limitColumn);
+                    randomRow = Math.floor(Math.random() * limitRow);
+                }
+
+                console.log(
+                    `Trying word ${words[i]} at (${randomColumn}, ${randomRow})`
+                );
+                if (tryPutWord(randomColumn, randomRow, i)) {
                     success = true;
                 } else {
-                    setGrid(defaultGrid);
+                    //setGrid(defaultGrid);
+                    attempts += 1;
                 }
+            }
+            if (!success) {
+                console.error(
+                    `Failed to place word ${words[i]} after ${maxAttempts} attempts. Skipping to the next word.`
+                );
             }
         }
     };
