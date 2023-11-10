@@ -31,26 +31,27 @@ export default function Screen2() {
     const tryPutWord = (randomColumn, randomRow, wordIndex) => {
         let letterIndex = 0;
         let result = true;
-        // let newGrid = JSON.parse(JSON.stringify(grid)); // Copia profunda del arreglo
-        
+        let partialGrid = JSON.parse(JSON.stringify(grid)); // Mantén una copia de respaldo
+
         const updateGrid = (rowIndex, colIndex, letter) => {
             setGrid((prevGrid) =>
-              prevGrid.map((row, i) =>
-                i === rowIndex
-                  ? row.map((el, j) => (j === colIndex ? letter : el))
-                  : row
-              )
+                prevGrid.map((row, i) =>
+                    i === rowIndex
+                        ? row.map((el, j) => (j === colIndex ? letter : el))
+                        : row
+                )
             );
-          };
+        };
 
         while (letterIndex < words[wordIndex].length) {
             if (
                 randomColumn >= 10 ||
-                randomRow >= 10 // ||
-                // newGrid[randomColumn] === undefined ||
-                // newGrid[randomColumn][randomRow] !== null
+                randomRow >= 10 ||
+                grid[randomColumn] === undefined ||
+                grid[randomColumn][randomRow] !== null
             ) {
                 result = false;
+                setGrid(partialGrid);
                 break;
             }
 
@@ -92,9 +93,9 @@ export default function Screen2() {
             }
         }
 
-        if (result) {
-            console.log(grid);
-        }
+        // if (result) {
+        //     console.log(grid);
+        // }
 
         return result;
     };
