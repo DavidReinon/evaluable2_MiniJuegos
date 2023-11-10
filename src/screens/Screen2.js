@@ -8,6 +8,9 @@ export default function Screen2() {
                 return null;
             });
         });
+        // return Array.from({ length: 10 }, () =>
+        //     Array.from({ length: 10 }, () => null)
+        // );
     };
 
     const initColorArray = () => {
@@ -28,30 +31,42 @@ export default function Screen2() {
     const tryPutWord = (randomColumn, randomRow, wordIndex) => {
         let letterIndex = 0;
         let result = true;
-        let newGrid = [...grid];
+        // let newGrid = JSON.parse(JSON.stringify(grid)); // Copia profunda del arreglo
+        
+        const updateGrid = (rowIndex, colIndex, letter) => {
+            setGrid((prevGrid) =>
+              prevGrid.map((row, i) =>
+                i === rowIndex
+                  ? row.map((el, j) => (j === colIndex ? letter : el))
+                  : row
+              )
+            );
+          };
 
         while (letterIndex < words[wordIndex].length) {
             if (
                 randomColumn >= 10 ||
-                randomRow >= 10 ||
-                newGrid[randomColumn] === undefined ||
-                newGrid[randomColumn][randomRow] !== null
+                randomRow >= 10 // ||
+                // newGrid[randomColumn] === undefined ||
+                // newGrid[randomColumn][randomRow] !== null
             ) {
                 result = false;
                 break;
             }
 
-            newGrid = newGrid.map((row, columnIndex) => {
-                if (columnIndex === randomColumn) {
-                    return row.map((cell, rowIndex) => {
-                        if (rowIndex === randomRow) {
-                            return words[wordIndex][letterIndex];
-                        }
-                        return cell;
-                    });
-                }
-                return row;
-            });
+            updateGrid(randomColumn, randomRow, words[wordIndex][letterIndex]);
+            // newGrid = JSON.parse(JSON.stringify(newGrid)); // Actualiza la copia para no modificar el estado directamente
+            // newGrid = newGrid.map((row, columnIndex) => {
+            //     if (columnIndex === randomColumn) {
+            //         return row.map((cell, rowIndex) => {
+            //             if (rowIndex === randomRow) {
+            //                 return words[wordIndex][letterIndex];
+            //             }
+            //             return cell;
+            //         });
+            //     }
+            //     return row;
+            // });
             letterIndex += 1;
 
             if (wordIndex === 0) {
@@ -78,8 +93,7 @@ export default function Screen2() {
         }
 
         if (result) {
-            setGrid(newGrid);
-            console.log(newGrid);
+            console.log(grid);
         }
 
         return result;
@@ -240,9 +254,7 @@ export default function Screen2() {
                                     onPressTouchable(indexRow, indexElement)
                                 }
                             >
-                                <Text style={{ fontSize: 13 }}>
-                                    {element || ""}
-                                </Text>
+                                <Text style={{ fontSize: 13 }}>{element}</Text>
                             </TouchableOpacity>
                         ))}
                     </View>
