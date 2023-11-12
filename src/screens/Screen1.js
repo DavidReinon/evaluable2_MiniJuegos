@@ -13,7 +13,7 @@ export default function Screen1() {
     const [letra2, setLetra2] = useState("");
     const [letra3, setLetra3] = useState("");
     const [letra4, setLetra4] = useState("");
-    const [letra5, setLetra5] = useState("");º
+    const [letra5, setLetra5] = useState("");
     const [letra6, setLetra6] = useState("");
     const [letra7, setLetra7] = useState("");
     const [letra8, setLetra8] = useState("");
