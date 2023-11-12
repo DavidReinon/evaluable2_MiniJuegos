@@ -56,18 +56,6 @@ export default function Screen2() {
             }
 
             updateGrid(randomColumn, randomRow, words[wordIndex][letterIndex]);
-            // newGrid = JSON.parse(JSON.stringify(newGrid)); // Actualiza la copia para no modificar el estado directamente
-            // newGrid = newGrid.map((row, columnIndex) => {
-            //     if (columnIndex === randomColumn) {
-            //         return row.map((cell, rowIndex) => {
-            //             if (rowIndex === randomRow) {
-            //                 return words[wordIndex][letterIndex];
-            //             }
-            //             return cell;
-            //         });
-            //     }
-            //     return row;
-            // });
             letterIndex += 1;
 
             if (wordIndex === 0) {
@@ -100,7 +88,24 @@ export default function Screen2() {
         return result;
     };
 
+    const fillLettersInEmpty = () => {
+        const alfabeto = "abcdefghijklmnopqrstuvwxyz";
+
+        const nuevoGrid = grid.map((row) => {
+            return row.map((element) => {
+                if (element === null || element === "") {
+                    const indice = Math.floor(Math.random() * alfabeto.length);
+                    return alfabeto.charAt(indice);
+                } else {
+                    return element;
+                }
+            });
+        });
+        setRellenades(true);
+        setGrid(nuevoGrid);
+    };
     const putWordsInRandomOrder = () => {
+        if (rellenades) return;
         for (let i = 0; i < words.length; i++) {
             let success = false;
             let limitColumn = 10;
@@ -169,7 +174,6 @@ export default function Screen2() {
                 if (tryPutWord(randomColumn, randomRow, i)) {
                     success = true;
                 } else {
-                    //setGrid(defaultGrid);
                     attempts += 1;
                 }
             }
@@ -179,19 +183,7 @@ export default function Screen2() {
                 );
             }
         }
-    };
-
-    const rellenarLetras = () => {
-        if (rellenades) return;
-
-        const alfabeto = "abcdefghijklmnopqrstuvwxyz";
-        const letrasRellenadas = grid.map(() => {
-            const indice = Math.floor(Math.random() * alfabeto.length);
-            return alfabeto.charAt(indice);
-        });
-
-        setGrid(letrasRellenadas);
-        setRellenades(true);
+        fillLettersInEmpty();
     };
 
     const onPressTouchable = (indexRow, indexElement) => {
