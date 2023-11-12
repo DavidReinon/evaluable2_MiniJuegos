@@ -1,14 +1,16 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import Screen2 from "./src/screens/Screen2";
+import { StyleSheet} from "react-native";
+import Screen1 from './src/screens/Screen1';
+import Screen2 from './src/screens/Screen2';
 
-export default function App() {
-    return (
-        <View style={styles.container}>
-            <Screen2></Screen2>
-        </View>
-    );
-}
+const Tab = createBottomTabNavigator();
+const App = () => (
+  <NavigationContainer>
+    <Tab.Navigator>
+      <Tab.Screen name="screen1" component={Screen1} />
+      <Tab.Screen name="screen2" component={Screen2} />
+    </Tab.Navigator>
+  </NavigationContainer>
+);
 
 const styles = StyleSheet.create({
     container: {
